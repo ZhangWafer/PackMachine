@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>MsSqlHelper</id>
+    <version>4.0.0.110</version>
+    <title>MsSqlHelper</title>
+    <authors>Jeroen Pot,Dorus Verhoeckx,Sander Kinds</authors>
+    <owners>Jeroen Pot,Dorus Verhoeckx,Sander Kinds</owners>
+    <projectUrl>https://github.com/jeroenpot/Mirabeau-Sql-Helper</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/jeroenpot/Mirabeau-Sql-Helper/develop/mssql-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Static helper class for performing MS SQL operations. 
+      Based on the Microsoft .NET Data Access Application Block v2.0.</description>
+    <summary />
+    <copyright>Copyright 2015</copyright>
+    <tags>SqlHelper Sql Server DatabaseHelper SqlServer SQL MsSqlHelper</tags>
+    <dependencies>
+      <dependency id="Microsoft.SqlServer.Types" version="11.0.2" />
+    </dependencies>
+  </metadata>
+</package>
