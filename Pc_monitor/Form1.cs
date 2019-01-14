@@ -6,11 +6,14 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Newtonsoft.Json;
-
+using System.Speech;
+using System.Speech.Recognition;
+using System.Speech.Synthesis;
 
 
 namespace Pc_monitor
@@ -62,9 +65,20 @@ namespace Pc_monitor
         DataTable dt2 = null;
 
 
+        //语音
+        SpeechRecognitionEngine recEngine = new SpeechRecognitionEngine();
+        SpeechSynthesizer speech = new SpeechSynthesizer();
+
+        public void SpeechVideo_Read(int rate, int volume, string speektext) //读
+        {
+            speech.Rate = rate;
+            speech.Volume = volume;
+            speech.SpeakAsync(speektext);
+        }
+
 
         //打菜号暂时变量
-        public static int TempOrderId = 0;
+        public static string TempOrderId ="";
         public static bool TakeOrderBool = true;
         private string personId = null;
         public static bool AllowTakeOrderBool = true;
@@ -116,12 +130,18 @@ namespace Pc_monitor
                     label2.Font = new Font("宋体粗体", 30);
                     label2.ForeColor = Color.GreenYellow;
                     label2.Text = "扫码成功！";
+                    SpeechVideo_Read(0, 100, "扫码成功！");
+
 
                     //扫码成功写入数据库
                     string[] orderFoodArray = OrderFoodList.ToArray(); //拼凑选中的字符串
                     string foodstring = string.Join(",", orderFoodArray);
-                    InsertRecoed(staffEnum, personId, whole_catlocation.ToString(), foodstring,
+                    InsertRecoed(staffEnum, personId, whole_catlocation.ToString(), TempOrderId.ToString(), foodstring,
                         DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    //还原buuton的enable状态！
+                    Return_Button();
+                    //清楚已选列表
+                    OrderFoodList.Clear();
 
                 }
                 catch (Exception EX)
@@ -129,6 +149,9 @@ namespace Pc_monitor
                     richTextBox1.Text = "";
                     //  MessageBox.Show(EX.Message);
                     label2.Text = "请出示正确的二维码";
+                    SpeechVideo_Read(0, 100, "扫码错误！");
+                    OrderFoodList.Clear();
+                    Return_Button();
                 }
                 //写入文本，写入记录
             }
@@ -138,15 +161,15 @@ namespace Pc_monitor
         }
 
         //插入一条记录
-        private void InsertRecoed(string personEnum, string personId, string staffCanteen, string OrderNames,
+        private void InsertRecoed(string personEnum, string personId, string staffCanteen, string OrderId,string OrderNames,
             string recordTime)
         {
             SqlConnection conn = new SqlConnection(Properties.Settings.Default.localsqlConn);
             conn.Open();
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandText =
-                "INSERT INTO [dbo].[TempRecord_Pack]([staffEnum],[staffId],[staffCanteen],[OrderNames],[time],[upDateBool])VALUES('" +
-                personEnum + "','" + personId + "','" + staffCanteen + "','" + OrderNames + "','" + recordTime + "','false')";
+                "INSERT INTO [dbo].[TempRecord_Pack]([staffEnum],[staffId],[staffCanteen],[OrderId],[OrderNames],[time],[upDateBool])VALUES('" +
+                personEnum + "','" + personId + "','" + staffCanteen + "','" + OrderId + "','" + OrderNames + "','" + recordTime + "','false')";
             cmd.ExecuteNonQuery();
             conn.Close();
         }
@@ -190,6 +213,12 @@ namespace Pc_monitor
 
         private void button2_Click(object sender, EventArgs e)
         {
+            //每次点更新更新一次数据库表
+            PcTable = SqlHelper.ExecuteDataTable("select * from Cater.PCStaff");
+            WorkerTable = SqlHelper.ExecuteDataTable("select * from Cater.WorkerStaff");
+            All_OrderDetail = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail");
+            All_OrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDate");
+
             //分割线·············分割线//
             int catlocation = Properties.Settings.Default.catlocation;
             DateTime currentTime = new DateTime();
@@ -250,6 +279,7 @@ namespace Pc_monitor
             try
             {
                var selectSetInDateId= dtRows[0][0];
+                TempOrderId = selectSetInDateId.ToString();
                dt2 = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail where CookbookDateId='" + selectSetInDateId + "'");
                dtRows = dt2.Rows;
                rowCounts = dt2.Rows.Count;
@@ -297,8 +327,11 @@ namespace Pc_monitor
         List<string> OrderFoodList=new List<string>();
         public void button_MouseClick(object sender, EventArgs e)
         {
+            
             //拿取数据
             Button button = (Button)sender;
+            //使button不可用，一个菜只能点一个
+            button.Enabled = false;
             var NameArray= button.Name.Split('*');
             //调整label2字体
             label2.Font = new Font("黑体", 22);
@@ -317,8 +350,100 @@ namespace Pc_monitor
         {
             label2.Text = "";
             OrderFoodList.Clear();
+            Return_Button();
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            try
+            {
+                DataTable recorDataTable = GetTempRecord("Police");
+
+                //提交字符串url
+                for (int i = 0; i < recorDataTable.Rows.Count; i++)
+                {
+                    string get_url = "http://120.236.239.118:7030/Interface/Synchronize/PCPackingSynchronize.ashx?pcId=" + recorDataTable.Rows[i][2] + "&cafeteriId=" + recorDataTable.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable.Rows[i][4] + "&cookbookSetInDateDetailIds="+recorDataTable.Rows[i][5];
+               
+                    GetFunction(get_url);
+                }
+                DataTable recorDataTable2 = GetTempRecord("Worker");
+                //提交字符串url
+                for (int i = 0; i < recorDataTable2.Rows.Count; i++)
+                {
+                    string get_url = "http://120.236.239.118:7030/Interface/Synchronize/WorkerPackingSynchronize.ashx?workerId=" + recorDataTable2.Rows[i][2] + "&cafeteriId=" + recorDataTable2.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable2.Rows[i][4] + "&cookbookSetInDateDetailIds="+recorDataTable.Rows[i][5];
+              
+                    GetFunction(get_url);
+                }
+                this.Enabled = true;
+                MessageBox.Show("同步完成！");
+                ChangeUpdateTable();
+            }
+            catch (Exception essException)
+            {
+                this.Enabled = true;
+                MessageBox.Show("同步错误！："+essException.Message);
+            }
+
+        }
+
+        //get方法
+        //get方法
+        private string GetFunction(string url)
+        {
+
+            System.Net.HttpWebRequest request;
+            // 创建一个HTTP请求  
+            request = (System.Net.HttpWebRequest)WebRequest.Create(url);
+            //request.Method="get";  
+            System.Net.HttpWebResponse response;
+            response = (System.Net.HttpWebResponse)request.GetResponse();
+            System.IO.StreamReader myreader = new System.IO.StreamReader(response.GetResponseStream(), Encoding.UTF8);
+            string responseText = myreader.ReadToEnd();
+            myreader.Close();
+            return responseText;
+        }
+
+
+        //拿本地记录表
+        //获取record表
+        private DataTable GetTempRecord(string Pc_Worker)
+        {
+            SqlConnection conn = new SqlConnection(Properties.Settings.Default.localsqlConn);
+            conn.Open();
+            SqlCommand sqlCommand = new SqlCommand("select * from dbo.TempRecord_Pack where staffEnum='" + Pc_Worker + "' and upDateBool='0'", conn);
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+            DataTable tempDatetable = new DataTable();
+            sqlDataAdapter.Fill(tempDatetable);
+            conn.Close();
+            return tempDatetable;
+
+        }
+
+
+        //更新updatebool标志位
+        private void ChangeUpdateTable()
+        {
+            SqlConnection conn = new SqlConnection(Properties.Settings.Default.localsqlConn);
+            conn.Open();
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE [LocalRecord].[dbo].[TempRecord_Pack] SET [upDateBool] = 'true' WHERE [upDateBool]='false'";
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
+
+        private void Return_Button()
+        {
+            foreach (Control c in groupBox1.Controls)
+            {
+                if (c is Button)
+                {
+                    //这里写代码逻辑
+                    c.Enabled = true;
+                }
+            }
+        }
     }
 }
 

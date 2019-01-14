@@ -23,17 +23,17 @@ namespace Pc_monitor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (Form1.TakeOrderBool == false)
-            {
-                int tempId = Form1.TempOrderId;
-                DataTable dtOrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail where CookbookDateId = '" + tempId + "'");
+            //if (Form1.TakeOrderBool == false)
+            //{
+            //   // int tempId = Form1.TempOrderId;
+            //    DataTable dtOrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail where CookbookDateId = '" + tempId + "'");
            
-                for (int i = 0; i < dtOrderTable.Rows.Count; i++)
-                {
-                    label2.Text += dtOrderTable.Rows[i][3].ToString() + "\r\n\r\n";
-                }
-                timer1.Stop();
-            }
+            //    for (int i = 0; i < dtOrderTable.Rows.Count; i++)
+            //    {
+            //        label2.Text += dtOrderTable.Rows[i][3].ToString() + "\r\n\r\n";
+            //    }
+            //    timer1.Stop();
+            //}
         }
 
         private void button1_Click(object sender, EventArgs e)

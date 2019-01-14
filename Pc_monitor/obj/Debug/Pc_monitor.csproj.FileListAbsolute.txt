@@ -71,7 +71,6 @@ E:\GitHub\PackMachine\Pc_monitor\bin\Debug\SqlServerTypes\x86\SqlServerSpatial13
 E:\GitHub\PackMachine\Pc_monitor\bin\Debug\Pc_monitor.exe
 E:\GitHub\PackMachine\Pc_monitor\bin\Debug\Pc_monitor.pdb
 E:\GitHub\PackMachine\Pc_monitor\bin\Debug\Microsoft.SqlServer.Types.dll
-E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csprojResolveAssemblyReference.cache
 E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.backForm.resources
 E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.Form1.resources
 E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.Form5.resources

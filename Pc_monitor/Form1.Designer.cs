@@ -82,7 +82,8 @@
             // 
             // button1
             // 
-            this.button1.BackgroundImage = global::Pc_monitor.Properties.Resources.login_bg2;
+            this.button1.BackgroundImage = global::Pc_monitor.Properties.Resources.button_bb;
+            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button1.Font = new System.Drawing.Font("宋体", 20F);
             this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button1.Location = new System.Drawing.Point(305, 637);
@@ -115,7 +116,8 @@
             // 
             // button2
             // 
-            this.button2.BackgroundImage = global::Pc_monitor.Properties.Resources.login_bg2;
+            this.button2.BackgroundImage = global::Pc_monitor.Properties.Resources.button_bb;
+            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button2.Font = new System.Drawing.Font("宋体", 20F);
             this.button2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button2.Location = new System.Drawing.Point(12, 682);
@@ -128,7 +130,8 @@
             // 
             // button3
             // 
-            this.button3.BackgroundImage = global::Pc_monitor.Properties.Resources.login_bg2;
+            this.button3.BackgroundImage = global::Pc_monitor.Properties.Resources.button_bb;
+            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button3.Font = new System.Drawing.Font("宋体", 20F);
             this.button3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button3.Location = new System.Drawing.Point(679, 637);
@@ -153,7 +156,7 @@
             // 
             // button4
             // 
-            this.button4.BackgroundImage = global::Pc_monitor.Properties.Resources.login_bg2;
+            this.button4.BackgroundImage = global::Pc_monitor.Properties.Resources.button_bb;
             this.button4.Font = new System.Drawing.Font("宋体", 20F);
             this.button4.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button4.Location = new System.Drawing.Point(1256, 8);
@@ -162,12 +165,14 @@
             this.button4.TabIndex = 9;
             this.button4.Text = "同步";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundImage = global::Pc_monitor.Properties.Resources.login_bg2;
+            this.BackgroundImage = global::Pc_monitor.Properties.Resources._480p1;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1344, 730);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label4);
@@ -179,6 +184,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
