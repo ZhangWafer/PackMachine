@@ -33,6 +33,7 @@ namespace Pc_monitor
         private DataTable WorkerTable;
         private DataTable All_OrderDetail;
         private DataTable All_OrderTable;
+        private DataTable All_cookBook;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -211,6 +212,17 @@ namespace Pc_monitor
             xmlDoc.Save(@"d:\User.xml");
         }
 
+        //将菜单转换成字典
+        private Dictionary<string, string> changeCookBookIntoDictionary(DataTable cookbookTable)
+        {
+            Dictionary<string, string> tempDictionary=new Dictionary<string, string>();
+            for (int i = 0; i < cookbookTable.Rows.Count; i++)
+            {
+                tempDictionary.Add(cookbookTable.Rows[i][0].ToString(), cookbookTable.Rows[i][3].ToString());
+            }
+            return tempDictionary;
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             //每次点更新更新一次数据库表
@@ -218,6 +230,10 @@ namespace Pc_monitor
             WorkerTable = SqlHelper.ExecuteDataTable("select * from Cater.WorkerStaff");
             All_OrderDetail = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail");
             All_OrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDate");
+            All_cookBook = SqlHelper.ExecuteDataTable("select * from Cater.Cookbook");
+
+            //价格表转字典
+            Dictionary<string,string> cookDictionary= changeCookBookIntoDictionary(All_cookBook);
 
             //分割线·············分割线//
             int catlocation = Properties.Settings.Default.catlocation;
@@ -299,7 +315,8 @@ namespace Pc_monitor
                     button.Font = new Font("宋体粗体", 14);
                     button.TextAlign = ContentAlignment.MiddleCenter;
                     button.Name = "row*" + dtRows[i][0];
-                    button.Text = dtRows[i][3].ToString();
+                    //通过字典拿到价格
+                    button.Text = dtRows[i][3].ToString() + " "+cookDictionary[dtRows[i][2].ToString()]+"元";
 
                     //通过坐标设置位置
                     button.Size = new Size(200, 40);
@@ -356,6 +373,7 @@ namespace Pc_monitor
         private void button4_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
+           string header_url = Properties.Settings.Default.header_url;
             try
             {
                 DataTable recorDataTable = GetTempRecord("Police");
@@ -363,15 +381,14 @@ namespace Pc_monitor
                 //提交字符串url
                 for (int i = 0; i < recorDataTable.Rows.Count; i++)
                 {
-                    string get_url = "http://120.236.239.118:7030/Interface/Synchronize/PCPackingSynchronize.ashx?pcId=" + recorDataTable.Rows[i][2] + "&cafeteriId=" + recorDataTable.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable.Rows[i][4] + "&cookbookSetInDateDetailIds="+recorDataTable.Rows[i][5];
-               
+                    string get_url = "http://" + header_url + "/Interface/Synchronize/PCPackingSynchronize.ashx?pcId=" + recorDataTable.Rows[i][2] + "&cafeteriId=" + recorDataTable.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable.Rows[i][4] + "&cookbookSetInDateDetailIds=" + recorDataTable.Rows[i][5];
                     GetFunction(get_url);
                 }
                 DataTable recorDataTable2 = GetTempRecord("Worker");
                 //提交字符串url
                 for (int i = 0; i < recorDataTable2.Rows.Count; i++)
                 {
-                    string get_url = "http://120.236.239.118:7030/Interface/Synchronize/WorkerPackingSynchronize.ashx?workerId=" + recorDataTable2.Rows[i][2] + "&cafeteriId=" + recorDataTable2.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable2.Rows[i][4] + "&cookbookSetInDateDetailIds="+recorDataTable.Rows[i][5];
+                    string get_url = "http://"+header_url+"/Interface/Synchronize/WorkerPackingSynchronize.ashx?workerId=" + recorDataTable2.Rows[i][2] + "&cafeteriId=" + recorDataTable2.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable2.Rows[i][4] + "&cookbookSetInDateDetailIds="+recorDataTable2.Rows[i][5];
               
                     GetFunction(get_url);
                 }

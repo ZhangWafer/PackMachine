@@ -26,5 +26,8 @@
     <Setting Name="localsqlConn" Type="System.String" Scope="User">
       <Value Profile="(Default)">server=MAT-WPC0015\WAFER;database=LocalRecord;uid=sa;pwd=Zyfzyf123;</Value>
     </Setting>
+    <Setting Name="header_url" Type="System.String" Scope="User">
+      <Value Profile="(Default)">68.89.24.77</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

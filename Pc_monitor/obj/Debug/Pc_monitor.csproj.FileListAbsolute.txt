@@ -77,3 +77,4 @@ E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.Form5.resources
 E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.login.resources
 E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.Properties.Resources.resources
 E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csproj.GenerateResource.Cache
+E:\GitHub\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csprojResolveAssemblyReference.cache
