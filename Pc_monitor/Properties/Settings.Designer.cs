@@ -121,7 +121,7 @@ namespace Pc_monitor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("68.89.24.77")]
+        [global::System.Configuration.DefaultSettingValueAttribute("120.236.239.118:7030")]
         public string header_url {
             get {
                 return ((string)(this["header_url"]));
