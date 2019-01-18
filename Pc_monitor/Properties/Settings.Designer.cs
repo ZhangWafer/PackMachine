@@ -73,7 +73,7 @@ namespace Pc_monitor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("14:00")]
+        [global::System.Configuration.DefaultSettingValueAttribute("15:00")]
         public string l2 {
             get {
                 return ((string)(this["l2"]));

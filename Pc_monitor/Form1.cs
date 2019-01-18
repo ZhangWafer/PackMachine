@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using System.Speech;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
+using System.Text.RegularExpressions;
+using XinYu.Framework.Library.Implement.Security;
 
 
 namespace Pc_monitor
@@ -109,10 +111,20 @@ namespace Pc_monitor
                 {
                     //解析扫码数据，拿取关键信息
                     string jsonText = richTextBox1.Text;
+                    //二维码解码
+                    jsonText = Encrypt.Decode(jsonText);
+                    //json数据格式整理
                     JavaScriptObject jsonObj = JavaScriptConvert.DeserializeObject<JavaScriptObject>(jsonText);
                     Temp_pcNum = jsonObj["Num"].ToString();
                     personId = jsonObj["Id"].ToString();
                     staffEnum = jsonObj["staffEnum"].ToString();
+                    //如果是家属 则return
+                    if (staffEnum=="Family")
+                    {
+                        richTextBox1.Text = "";
+                        MessageBox.Show("家属不可打包");
+                        return;
+                    }
                     //检查是否存在这个人
                     DataRow[] selectedResult = PcTable.Select("Id=" + personId);
                     DataRow[] selectedResult_worker = WorkerTable.Select("Id=" + personId);
@@ -143,7 +155,7 @@ namespace Pc_monitor
                     Return_Button();
                     //清楚已选列表
                     OrderFoodList.Clear();
-
+                    OrderFoodPrice.Clear();
                 }
                 catch (Exception EX)
                 {
@@ -152,6 +164,7 @@ namespace Pc_monitor
                     label2.Text = "请出示正确的二维码";
                     SpeechVideo_Read(0, 100, "扫码错误！");
                     OrderFoodList.Clear();
+                    OrderFoodPrice.Clear();
                     Return_Button();
                 }
                 //写入文本，写入记录
@@ -177,11 +190,20 @@ namespace Pc_monitor
 
         private int selectedNum = 0;
 
+        private string priceSum()
+        {
+            double sumPrice=0;
+            for (int i = 0; i < OrderFoodPrice.Count; i++)
+            {
+                sumPrice += Convert.ToDouble(OrderFoodPrice[i]);
+            }
+            return sumPrice.ToString();
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
             TakeOrderBool = true;
-            label2.Text = "请扫码！";
+            label2.Text = "请扫码！总价：" + priceSum();
             label2.Font = new Font("宋体粗体", 30);
             label2.ForeColor = Color.Red;
             richTextBox1.Focus();
@@ -342,6 +364,7 @@ namespace Pc_monitor
 }
         }
         List<string> OrderFoodList=new List<string>();
+        List<string> OrderFoodPrice=new List<string>();
         public void button_MouseClick(object sender, EventArgs e)
         {
             
@@ -361,11 +384,23 @@ namespace Pc_monitor
             label2.Text += button.Text + " ";
             //添加菜品进数组
             OrderFoodList.Add( NameArray[1]);
+
+            //每选一个添加一次总价
+            string str = button.Text; //我们抓取当前字符当中的123.11
+            str = Regex.Replace(str, @"[^\d.\d]", "");
+            // 如果是数字，则转换为decimal类型
+            if (Regex.IsMatch(str, @"^[+-]?\d*[.]?\d*$"))
+            {
+                decimal result_Number = decimal.Parse(str);
+                OrderFoodPrice.Add(result_Number.ToString());
+            }
+
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             label2.Text = "";
+            OrderFoodPrice.Clear();
             OrderFoodList.Clear();
             Return_Button();
         }
@@ -412,6 +447,7 @@ namespace Pc_monitor
             System.Net.HttpWebRequest request;
             // 创建一个HTTP请求  
             request = (System.Net.HttpWebRequest)WebRequest.Create(url);
+            request.Timeout = 5000;
             //request.Method="get";  
             System.Net.HttpWebResponse response;
             response = (System.Net.HttpWebResponse)request.GetResponse();
@@ -459,6 +495,18 @@ namespace Pc_monitor
                     //这里写代码逻辑
                     c.Enabled = true;
                 }
+            }
+        }
+
+        private void panel1_DoubleClick(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("确定关机吗？", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                //关机代码
+                System.Diagnostics.Process bootProcess = new System.Diagnostics.Process();
+                bootProcess.StartInfo.FileName = "shutdown";
+                bootProcess.StartInfo.Arguments = "/s";
+                bootProcess.Start();
             }
         }
     }
