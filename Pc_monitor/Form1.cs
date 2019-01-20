@@ -26,8 +26,8 @@ namespace Pc_monitor
         {
             InitializeComponent();
             //设置全屏
-            //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            //this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
         }
 
 
@@ -39,6 +39,7 @@ namespace Pc_monitor
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            
             //启动定时器
             timer1.Enabled = true;
             timer1.Start();
@@ -334,29 +335,29 @@ namespace Pc_monitor
                     Button button = new Button();
                     button.BackgroundImage = Properties.Resources.login_bg2;
                     button.ForeColor = Color.White;
-                    button.Font = new Font("宋体粗体", 14);
+                    button.Font = new Font("宋体粗体", 18);
                     button.TextAlign = ContentAlignment.MiddleCenter;
                     button.Name = "row*" + dtRows[i][0];
                     //通过字典拿到价格
                     button.Text = dtRows[i][3].ToString() + " "+cookDictionary[dtRows[i][2].ToString()]+"元";
 
                     //通过坐标设置位置
-                    button.Size = new Size(200, 40);
+                    button.Size = new Size(200, 100);
                     if (i < 5)
                     {
                         button.Location = new Point(20 + 260 * i, 20);
                     }
                     else if (i >= 5 && i <= 9)
                     {
-                        button.Location = new Point(20 + 260 * (i - 5), 80);
+                        button.Location = new Point(20 + 260 * (i - 5), 140);
                     }
                     else if (i >= 10 && i <= 14)
                     {
-                        button.Location = new Point(20 + 260 * (i - 10), 140);
+                        button.Location = new Point(20 + 260 * (i - 10), 260);
                     }
                     else if (i >= 15 && i <= 19)
                     {
-                        button.Location = new Point(20 + 260 * (i - 15), 200);
+                        button.Location = new Point(20 + 260 * (i - 15), 380);
                     }
                     //将groubox添加到页面上
                     groupBox1.Controls.Add(button);
@@ -380,6 +381,10 @@ namespace Pc_monitor
             if (label2.Text == "请出示正确的二维码" || label2.Text == "扫码成功！"||label2.Text=="请扫码！")
             {
                 label2.Text = "";
+            }
+            if (OrderFoodList.Count == 3)
+            {
+                label2.Text += "\n";
             }
             label2.Text += button.Text + " ";
             //添加菜品进数组
