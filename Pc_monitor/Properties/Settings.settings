@@ -15,19 +15,19 @@
       <Value Profile="(Default)">08:00</Value>
     </Setting>
     <Setting Name="l2" Type="System.String" Scope="User">
-      <Value Profile="(Default)">15:00</Value>
+      <Value Profile="(Default)">09:00</Value>
     </Setting>
     <Setting Name="d1" Type="System.String" Scope="User">
-      <Value Profile="(Default)">23:02</Value>
+      <Value Profile="(Default)">10:02</Value>
     </Setting>
     <Setting Name="d2" Type="System.String" Scope="User">
       <Value Profile="(Default)">24:00</Value>
     </Setting>
-    <Setting Name="localsqlConn" Type="System.String" Scope="User">
-      <Value Profile="(Default)">server=MAT-WPC0015\WAFER;database=LocalRecord;uid=sa;pwd=Zyfzyf123;</Value>
-    </Setting>
     <Setting Name="header_url" Type="System.String" Scope="User">
-      <Value Profile="(Default)">120.236.239.118:7030</Value>
+      <Value Profile="(Default)">localhost:7029</Value>
+    </Setting>
+    <Setting Name="localsqlConn" Type="System.String" Scope="User">
+      <Value Profile="(Default)">server=MAT-PC0045\WAFER;database=LocalRecord;uid=sa;pwd=Zyfzyf123;</Value>
     </Setting>
   </Settings>
 </SettingsFile>
