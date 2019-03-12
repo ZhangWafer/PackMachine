@@ -30,7 +30,6 @@ namespace Pc_monitor
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
         }
 
-
         private DataTable PcTable;
         private DataTable WorkerTable;
         private DataTable All_OrderDetail;
@@ -79,7 +78,6 @@ namespace Pc_monitor
             speech.SpeakAsync(speektext);
         }
 
-
         //打菜号暂时变量
         public static string TempOrderId ="";
         public static bool TakeOrderBool = true;
@@ -110,9 +108,9 @@ namespace Pc_monitor
                 try
                 {
                     //解析扫码数据，拿取关键信息
-                    string jsonText = richTextBox1.Text;
+                    var richText = richTextBox1.Text.Split('\n');
                     //二维码解码
-                    jsonText = Encrypt.Decode(jsonText);
+                    var  jsonText = Encrypt.Decode(richText[0]);
                     //json数据格式整理
                     JavaScriptObject jsonObj = JavaScriptConvert.DeserializeObject<JavaScriptObject>(jsonText);
                     Temp_pcNum = jsonObj["Num"].ToString();
@@ -212,7 +210,7 @@ namespace Pc_monitor
                         ButtonNumClear();
                         return;
                     }
-
+                    //
 
                     //显示扫码成功！大字体
                     richTextBox1.Text = "";

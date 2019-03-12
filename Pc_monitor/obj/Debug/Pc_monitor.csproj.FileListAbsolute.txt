@@ -96,3 +96,4 @@ D:\GITHUB\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.Properties.Resources.resou
 D:\GITHUB\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csproj.GenerateResource.Cache
 D:\GITHUB\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csproj.CoreCompileInputs.cache
 D:\GITHUB\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csproj.CopyComplete
+D:\GITHUB\PackMachine\Pc_monitor\obj\Debug\Pc_monitor.csprojAssemblyReference.cache
