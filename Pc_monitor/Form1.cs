@@ -26,14 +26,14 @@ namespace Pc_monitor
         {
             InitializeComponent();
             //设置全屏
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            if (Properties.Settings.Default.全屏)
+            {
+                 this.FormBorderStyle = FormBorderStyle.None;
+                 this.WindowState =FormWindowState.Maximized;
+            }
+
         }
 
-        private DataTable PcTable;
-        private DataTable WorkerTable;
-        private DataTable All_OrderDetail;
-        private DataTable All_OrderTable;
         private DataTable All_cookBook;
 
         private void Form1_Load(object sender, EventArgs e)
@@ -41,25 +41,14 @@ namespace Pc_monitor
             //启动定时器
             timer1.Enabled = true;
             timer1.Start();
+
             //显示第二显示屏画面
             // backForm bkForm = new backForm();
             // bkForm.Show();
             //读取用户表格---只在开机读取一次
-            try
-            {
-                PcTable = SqlHelper.ExecuteDataTable("select * from Cater.PCStaff");
-                WorkerTable = SqlHelper.ExecuteDataTable("select * from Cater.WorkerStaff");
-                All_OrderDetail = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail");
-                All_OrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDate");
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show("数据库连接失败!" + exception.Message);
-            }
         }
 
 
-        private int timer_count_10s = 59;
         //全局变量，存储当前二维码的
         private string Temp_pcNum = null;
         private string staffEnum = null;
@@ -79,7 +68,7 @@ namespace Pc_monitor
         }
 
         //打菜号暂时变量
-        public static string TempOrderId ="";
+        public static string TempOrderId = "";
         public static bool TakeOrderBool = true;
         private string personId = null;
         public static bool AllowTakeOrderBool = true;
@@ -87,7 +76,7 @@ namespace Pc_monitor
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            //1秒跑一次的程序1
+            //1秒跑一次的程序
             if (AllowTakeOrderBool == true)
             {
                 if (button1.Enabled == false)
@@ -99,7 +88,7 @@ namespace Pc_monitor
             if (richTextBox1.Text.Contains("\n"))
             {
 
-                if (OrderFoodList.Count == 0)
+                if (foodDic.Count == 0)
                 {
                     richTextBox1.Clear();
                     MessageBox.Show("请选择至少一个菜品");
@@ -110,7 +99,7 @@ namespace Pc_monitor
                     //解析扫码数据，拿取关键信息
                     var richText = richTextBox1.Text.Split('\n');
                     //二维码解码
-                    var  jsonText = Encrypt.Decode(richText[0]);
+                    var jsonText = Encrypt.Decode(richText[0]);
                     //json数据格式整理
                     JavaScriptObject jsonObj = JavaScriptConvert.DeserializeObject<JavaScriptObject>(jsonText);
                     Temp_pcNum = jsonObj["Num"].ToString();
@@ -118,16 +107,27 @@ namespace Pc_monitor
                     staffEnum = jsonObj["staffEnum"].ToString();
                     var personCardId = jsonObj["Num"].ToString();//身份证号码
                     //如果是家属 则return
-                    if (staffEnum=="Family")
+                    if (staffEnum == "Family")
                     {
                         richTextBox1.Text = "";
                         MessageBox.Show("家属不可打包");
                         return;
                     }
                     //检查是否存在这个人
-                    DataRow[] selectedResult = PcTable.Select("Id=" + personId);
-                    DataRow[] selectedResult_worker = WorkerTable.Select("Id=" + personId);
-                    if (selectedResult.Length == 0 && selectedResult_worker.Length == 0)
+                    Object o_result = null;
+                    //检查是否存在这个人
+                    //DataRow[] selectedResult = PcTable.Select("Id=" + personId);
+                    if (staffEnum == "Police")
+                    {
+                        string select_Exist_pc = "select * from Cater.PCStaff where [Id]='" + personId + "'";
+                        o_result = SqlHelper.ExecuteScalar(select_Exist_pc);
+                    }
+                    else
+                    {
+                        string select_Exist_worker = "select * from Cater.WorkerStaff where [Id]='" + personId + "'";
+                        o_result = SqlHelper.ExecuteScalar(select_Exist_worker);
+                    }
+                    if (o_result == null)
                     {
                         richTextBox1.Text = "";
                         label2.Font = new Font("宋体粗体", 30);
@@ -135,7 +135,9 @@ namespace Pc_monitor
                         label2.Text = "查无此人";
                         OrderFoodList.Clear();
                         OrderFoodPrice.Clear();
-                        ButtonNumClear();
+                       // ButtonNumClear();
+                        foodDic.Clear();
+                        Refresh();
                         return;
                     }
                     //查看是否过期以及余额是否足够
@@ -148,12 +150,11 @@ namespace Pc_monitor
                     {
                         imforUrl = "http://" + Properties.Settings.Default.header_url + "/Interface/Worker/GetWorkerStaff.ashx?informationNum=" + personCardId;
                     }
-
                     string dateResponse = "";
                     try
                     {
                         dateResponse = GetFunction(imforUrl);//照片url回复
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -161,7 +162,9 @@ namespace Pc_monitor
                         label2.Text = "网络错误";
                         OrderFoodList.Clear();
                         OrderFoodPrice.Clear();
-                        ButtonNumClear();
+                        //ButtonNumClear();
+                        foodDic.Clear();
+                        Refresh();
                         return;
                     }
                     JavaScriptObject jsonResponse2 = JavaScriptConvert.DeserializeObject<JavaScriptObject>(dateResponse);
@@ -172,7 +175,9 @@ namespace Pc_monitor
                         label2.Text = "账号验证失败";
                         OrderFoodList.Clear();
                         OrderFoodPrice.Clear();
-                        ButtonNumClear();
+                        //ButtonNumClear();
+                        foodDic.Clear();
+                        Refresh();
                         return;
                     }
                     if (staffEnum == "Police")
@@ -195,7 +200,9 @@ namespace Pc_monitor
                             SpeechVideo_Read(0, 100, "用户已过期！");
                             OrderFoodList.Clear();
                             OrderFoodPrice.Clear();
-                            ButtonNumClear();
+                            foodDic.Clear();
+                            Refresh();
+                            //ButtonNumClear();
                             return;
                         }
                     }
@@ -207,25 +214,38 @@ namespace Pc_monitor
                         SpeechVideo_Read(0, 100, "余额不足！");
                         OrderFoodList.Clear();
                         OrderFoodPrice.Clear();
-                        ButtonNumClear();
+                        //ButtonNumClear();
+                        foodDic.Clear();
+                        Refresh();
                         return;
                     }
-                    //
 
                     //显示扫码成功！大字体
                     richTextBox1.Text = "";
                     label2.Font = new Font("宋体粗体", 30);
-                    label2.ForeColor = Color.GreenYellow;
+                    label2.ForeColor = Color.Green;
                     label2.Text = "扫码成功！";
                     SpeechVideo_Read(0, 100, "扫码成功！");
-                    ButtonNumClear();
+                    //ButtonNumClear();
 
                     //扫码成功写入数据库
-                    HashSet<string> hsOrderFoodList = new HashSet<string>(OrderFoodList); //此时已经去掉重复的数据保存在hashset中
-                    string[] orderFoodArray = hsOrderFoodList.ToArray(); //拼凑选中的字符串
-                    string foodstring = string.Join(",", orderFoodArray);
+                    string foodstring=null;
+                    foreach (var item in foodDic)
+                    {
+                        var str = item.Key;
+                        str = str.Substring(0, str.Length - 1);
+                        //定义正则表达式规则
+                        Regex reg = new Regex(@"\d+\.\d+");
+                        //返回一个结果集，找出菜名字！
+                        MatchCollection result = reg.Matches(str);
+                        str = str.Replace(result[0].Value, "");
+                        //查数据库找出detailID
+                        var selectID= SqlHelper.ExecuteScalar(@"SELECT [Id] FROM[XinYuSiteDB].[Cater].[CookbookSetInDateDetail] where CookbookDateId = '" + TempOrderId + "' and CookbookName = '"+ str + "'");
+                        foodstring += selectID + ",";
+                    }
+                    foodstring = foodstring.Substring(0, foodstring.Length - 1);
                     //计算总价
-                    string orderPrice =priceSum();
+                    string orderPrice = priceSum();
                     InsertRecoed(staffEnum, personId, whole_catlocation.ToString(), TempOrderId.ToString(), foodstring, orderPrice,
                         DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                     //还原buuton的enable状态！
@@ -233,6 +253,8 @@ namespace Pc_monitor
                     //清楚已选列表
                     OrderFoodList.Clear();
                     OrderFoodPrice.Clear();
+                    foodDic.Clear();
+                    Refresh();
                 }
                 catch (Exception EX)
                 {
@@ -243,19 +265,16 @@ namespace Pc_monitor
                     SpeechVideo_Read(0, 100, "扫码错误！");
                     OrderFoodList.Clear();
                     OrderFoodPrice.Clear();
-                    ButtonNumClear();
+                    //ButtonNumClear();
                     Return_Button();
-           
                 }
                 //写入文本，写入记录
             }
 
-            //60秒跑一次程序
-
         }
 
         //插入一条记录
-        private void InsertRecoed(string personEnum, string personId, string staffCanteen, string OrderId,string OrderNames,string orderPrice,
+        private void InsertRecoed(string personEnum, string personId, string staffCanteen, string OrderId, string OrderNames, string orderPrice,
             string recordTime)
         {
             SqlConnection conn = new SqlConnection(Properties.Settings.Default.localsqlConn);
@@ -272,10 +291,11 @@ namespace Pc_monitor
 
         private string priceSum()
         {
-            double sumPrice=0;
-            for (int i = 0; i < OrderFoodPrice.Count; i++)
+            double sumPrice = 0;
+            foreach (var item in foodDic)
             {
-                sumPrice += Convert.ToDouble(OrderFoodPrice[i]);
+               var  str = Regex.Replace(item.Key, @"[\u4e00-\u9fa5]", ""); //去除汉字
+                sumPrice += Convert.ToDouble(str) * Convert.ToInt16(item.Value);
             }
             return sumPrice.ToString();
         }
@@ -317,7 +337,7 @@ namespace Pc_monitor
         //将菜单转换成字典
         private Dictionary<string, string> changeCookBookIntoDictionary(DataTable cookbookTable)
         {
-            Dictionary<string, string> tempDictionary=new Dictionary<string, string>();
+            Dictionary<string, string> tempDictionary = new Dictionary<string, string>();
             for (int i = 0; i < cookbookTable.Rows.Count; i++)
             {
                 tempDictionary.Add(cookbookTable.Rows[i][0].ToString(), cookbookTable.Rows[i][3].ToString());
@@ -328,14 +348,10 @@ namespace Pc_monitor
         private void button2_Click(object sender, EventArgs e)
         {
             //每次点更新更新一次数据库表
-            PcTable = SqlHelper.ExecuteDataTable("select * from Cater.PCStaff");
-            WorkerTable = SqlHelper.ExecuteDataTable("select * from Cater.WorkerStaff");
-            All_OrderDetail = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail");
-            All_OrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDate");
             All_cookBook = SqlHelper.ExecuteDataTable("select * from Cater.Cookbook");
 
             //价格表转字典
-            Dictionary<string,string> cookDictionary= changeCookBookIntoDictionary(All_cookBook);
+            Dictionary<string, string> cookDictionary = changeCookBookIntoDictionary(All_cookBook);
 
             //分割线·············分割线//
             int catlocation = Properties.Settings.Default.catlocation;
@@ -383,8 +399,8 @@ namespace Pc_monitor
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
             try
             {
-                dt2 =SqlHelper.ExecuteDataTable("select * from  Cater.CookbookSetInDate where CafeteriaId=" + catlocation +
-                                               " and CookbookEnum='" + currentCat + "' and ChooseDate='" + todayDate +"'");
+                dt2 = SqlHelper.ExecuteDataTable("select * from  Cater.CookbookSetInDate where CafeteriaId=" + catlocation +
+                                               " and CookbookEnum='" + currentCat + "' and ChooseDate='" + todayDate + "'");
             }
             catch (Exception)
             {
@@ -396,40 +412,44 @@ namespace Pc_monitor
             var dtRows = dt2.Rows;
             try
             {
-               var selectSetInDateId= dtRows[0][0];
+                var selectSetInDateId = dtRows[0][0];
                 TempOrderId = selectSetInDateId.ToString();
-               dt2 = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail where CookbookDateId='" + selectSetInDateId + "'");
-               dtRows = dt2.Rows;
-               rowCounts = dt2.Rows.Count;
+                dt2 = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail where CookbookDateId='" + selectSetInDateId + "'");
+                dtRows = dt2.Rows;
+                rowCounts = dt2.Rows.Count;
             }
             catch (Exception)
             {
                 MessageBox.Show("查无排餐！");
                 return;
             }
-                groupBox1.Controls.Clear();
+            groupBox1.Controls.Clear();
+
+
             for (int i = 0; i < rowCounts; i++)
             {
                 //实例化GroupBox控件
                 Button button = new Button();
-                button.BackColor = Color.DarkBlue;
-             //   button.BackgroundImage = Properties.Resources.login_bg2;
-                button.ForeColor = Color.White;
-                button.Font = new Font("宋体粗体", 18);
+                button.BackColor = Color.DarkGray;
+                //   button.BackgroundImage = Properties.Resources.login_bg2;
+                button.ForeColor = Color.Black;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.Font = new Font("黑体粗体", 12);
                 button.TextAlign = ContentAlignment.MiddleCenter;
                 button.Name = "row*" + dtRows[i][0];
                 //通过字典拿到价格
-                button.Text = dtRows[i][3].ToString() + "\n " + cookDictionary[dtRows[i][2].ToString()] + "元"+"\n0";
+                button.Text = dtRows[i][3].ToString() + "\n " + cookDictionary[dtRows[i][2].ToString()] + "元";
 
                 //通过坐标设置位置
-                button.Size = new Size(200, 100);
-                if (i < 5)
+                button.Size = new Size(110, 100);
+                if (i < 6)
                 {
-                    button.Location = new Point(20 + 260 * i, 20);
+                    button.Location = new Point(20 + 130 * i, 20);
                 }
-                else if (i >= 5 && i <= 9)
+                else if (i >= 6 && i <= 12)
                 {
-                    button.Location = new Point(20 + 260 * (i - 5), 140);
+                    button.Location = new Point(20 + 130 * (i - 6), 140);
                 }
                 else if (i >= 10 && i <= 14)
                 {
@@ -446,44 +466,42 @@ namespace Pc_monitor
                 button.MouseClick += new MouseEventHandler(button_MouseClick);
             }
         }
-        List<string> OrderFoodList=new List<string>();
-        List<string> OrderFoodPrice=new List<string>();
+        List<string> OrderFoodList = new List<string>();
+        List<string> OrderFoodPrice = new List<string>();
+
+
+        Dictionary<string, int> foodDic = new Dictionary<string, int>();
+
+
         public void button_MouseClick(object sender, EventArgs e)
         {
-            
             //拿取数据
             Button button = (Button)sender;
-            //菜品数量加1
-            var buttonTextList=button.Text.Split('\n');
-            buttonTextList[2]= (Convert.ToInt16(buttonTextList[2]) + 1).ToString();
-            button.Text = buttonTextList[0] + "\n" + buttonTextList[1] + "\n" + buttonTextList[2];
-            //使button不可用，一个菜只能点一个
-            //button.Enabled = false;
-            var NameArray= button.Name.Split('*');
+            string namename = button.Text;
+            namename = namename.Replace("\n", string.Empty);
+            //把《菜名连同他妈的价格》加进去字典！！！！
+            if (!foodDic.ContainsKey(namename))
+            {
+                foodDic.Add(namename, 1);
+                Refresh();//刷新界面
+            }
+            else
+            {
+                foodDic[namename] = foodDic[namename] + 1;
+                Refresh();//刷新界面
+            }
+
             //调整label2字体
-            label2.Font = new Font("黑体", 22);
+            label2.Font = new Font("宋体粗体", 30);
             label2.ForeColor = Color.Red;
             //添加显示菜品
-            if (label2.Text == "请出示正确的二维码" || label2.Text == "扫码成功！"||label2.Text=="请扫码！")
+            if (label2.Text == "请出示正确的二维码" || label2.Text == "扫码成功！" || label2.Text == "请扫码！")
             {
                 label2.Text = "";
             }
             if (OrderFoodList.Count == 3)
             {
                 label2.Text += "\n";
-            }
-         //   label2.Text += button.Text + " ";
-            //添加菜品进数组
-            OrderFoodList.Add( NameArray[1]);
-
-            //每选一个添加一次总价
-            string str = button.Text; //我们抓取当前字符当中的123.11
-            str = Regex.Replace(str, @"[^\d.\d]", "");
-            // 如果是数字，则转换为decimal类型
-            if (Regex.IsMatch(str, @"^[+-]?\d*[.]?\d*$"))
-            {
-                decimal result_Number = decimal.Parse(str);
-                OrderFoodPrice.Add(result_Number.ToString().Substring(0,4));
             }
 
         }
@@ -500,18 +518,20 @@ namespace Pc_monitor
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ButtonNumClear();
 
+            // ButtonNumClear();
+            foodDic.Clear();
+            Refresh();
             label2.Text = "";
-            OrderFoodPrice.Clear();
-            OrderFoodList.Clear();
+           // OrderFoodPrice.Clear();
+           // OrderFoodList.Clear();
             Return_Button();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
-           string header_url = Properties.Settings.Default.header_url;
+            string header_url = Properties.Settings.Default.header_url;
             try
             {
                 DataTable recorDataTable = GetTempRecord("Police");
@@ -532,7 +552,7 @@ namespace Pc_monitor
                     for (int i = 0; i < recorDataTable2.Rows.Count; i++)
                     {
                         string get_url = "http://" + header_url + "/Interface/Synchronize/WorkerPackingSynchronize.ashx?workerId=" + recorDataTable2.Rows[i][2] + "&cafeteriId=" + recorDataTable2.Rows[i][3] + "&cookbookSetInDateId=" + recorDataTable2.Rows[i][4] + "&cookbookSetInDateDetailIds=" + recorDataTable2.Rows[i][5] + "&prices=" + recorDataTable2.Rows[i][6];
-         
+
                         GetFunction(get_url);
                     }
                 }
@@ -543,7 +563,7 @@ namespace Pc_monitor
             catch (Exception essException)
             {
                 this.Enabled = true;
-                MessageBox.Show("同步错误！："+essException.Message);
+                MessageBox.Show("同步错误！：" + essException.Message);
             }
 
         }
@@ -566,7 +586,6 @@ namespace Pc_monitor
             return responseText;
         }
 
-
         //拿本地记录表
         //获取record表
         private DataTable GetTempRecord(string Pc_Worker)
@@ -581,7 +600,6 @@ namespace Pc_monitor
             return tempDatetable;
 
         }
-
 
         //更新updatebool标志位
         private void ChangeUpdateTable()
@@ -616,6 +634,53 @@ namespace Pc_monitor
                 bootProcess.StartInfo.FileName = "shutdown";
                 bootProcess.StartInfo.Arguments = "/s";
                 bootProcess.Start();
+            }
+        }
+        private void Refresh()
+        {
+            groupBox2.Controls.Clear();
+            int i = 0;
+            foreach (var item in foodDic)
+            {
+                //实例化GroupBox控件  减号按钮
+                Button button = new Button();
+                button.Name = item.Key;
+                button.Image = Properties.Resources.减号按钮;
+                button.BackColor = Color.Transparent;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                //通过坐标设置位置
+                button.Size = new Size(40, 40);
+                button.Location = new Point(350, 20+i*50);
+                //将groubox添加button到页面上
+                groupBox2.Controls.Add(button);
+
+                //////////////////////////////////////lable添加代码
+                Label label = new Label();
+                label.Text = item.Key + "×" + item.Value;
+                label.ForeColor = Color.Black;
+                label.Font = new Font("黑体粗体", 18);
+                label.Location = new Point(5, 20+i*50);
+                label.Size = new Size(320, 35);
+                label.TextAlign = ContentAlignment.MiddleCenter;
+                groupBox2.Controls.Add(label);
+                //将button事件加入
+                button.MouseClick += new MouseEventHandler(button_MouseClick2);
+                i++;
+            }
+        }
+
+        public void button_MouseClick2(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            if(foodDic[button.Name]>0)
+            {
+                foodDic[button.Name] = foodDic[button.Name] - 1;
+                if (foodDic[button.Name] == 0)
+                {
+                    foodDic.Remove(button.Name);
+                }
+                Refresh();
             }
         }
     }

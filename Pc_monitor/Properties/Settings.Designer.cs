@@ -73,7 +73,7 @@ namespace Pc_monitor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("09:00")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16:00")]
         public string l2 {
             get {
                 return ((string)(this["l2"]));
@@ -85,7 +85,7 @@ namespace Pc_monitor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10:02")]
+        [global::System.Configuration.DefaultSettingValueAttribute("18:02")]
         public string d1 {
             get {
                 return ((string)(this["d1"]));
@@ -128,6 +128,18 @@ namespace Pc_monitor.Properties {
             }
             set {
                 this["localsqlConn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool 全屏 {
+            get {
+                return ((bool)(this["全屏"]));
+            }
+            set {
+                this["全屏"] = value;
             }
         }
     }

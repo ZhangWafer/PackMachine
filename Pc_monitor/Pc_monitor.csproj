@@ -159,6 +159,15 @@
     <None Include="Resources\button_bb.png" />
     <None Include="Resources\480p.png" />
     <None Include="Resources\480p1.png" />
+    <None Include="Resources\减号按钮.png" />
+    <None Include="Resources\购物车.png" />
+    <None Include="Resources\打包餐背景.jpg" />
+    <None Include="Resources\购物车1.png" />
+    <None Include="Resources\打包餐提交按钮.jpg" />
+    <None Include="Resources\打包餐提交.png" />
+    <None Include="Resources\打包餐清空.png" />
+    <None Include="Resources\打包餐更新按钮.jpg" />
+    <None Include="Resources\打包餐同步.png" />
     <Content Include="SqlServerTypes\readme.htm" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

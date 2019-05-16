@@ -118,8 +118,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="购物车" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\购物车.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="480p1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\480p1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="button_bb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\button_bb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="减号按钮" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\减号按钮.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="打包餐更新按钮" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\打包餐更新按钮.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="打包餐背景" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\打包餐背景.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="打包餐提交" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\打包餐提交.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="购物车1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\购物车1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="打包餐提交按钮" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\打包餐提交按钮.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="打包餐清空" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\打包餐清空.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="login-bg2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\login-bg2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -127,7 +154,7 @@
   <data name="480p" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\480p.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="480p1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\480p1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="打包餐同步" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\打包餐同步.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
