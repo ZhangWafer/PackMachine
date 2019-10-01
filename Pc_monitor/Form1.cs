@@ -257,8 +257,7 @@ namespace Pc_monitor
                     Refresh();
                 }
                 catch (Exception EX)
-                {
-                    MessageBox.Show(EX.Message);
+                {                  //  MessageBox.Show(EX.Message);
                     richTextBox1.Text = "";
                     //  MessageBox.Show(EX.Message);
                     label2.Text = "请出示正确的二维码";
@@ -471,7 +470,7 @@ namespace Pc_monitor
 
 
         Dictionary<string, int> foodDic = new Dictionary<string, int>();
-
+        Dictionary<string, int> foodDic_g = new Dictionary<string, int>();
 
         public void button_MouseClick(object sender, EventArgs e)
         {
@@ -598,7 +597,6 @@ namespace Pc_monitor
             sqlDataAdapter.Fill(tempDatetable);
             conn.Close();
             return tempDatetable;
-
         }
 
         //更新updatebool标志位

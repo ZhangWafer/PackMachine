@@ -18,22 +18,13 @@ namespace Pc_monitor
         //  this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
           //  this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.StartPosition = FormStartPosition.Manual; //窗体的位置由Location属性决定
-            this.Location = (Point)new Size(2000, 0);         //窗体的起始位置为(x,y)
+            this.Location = (Point)new Size(0, 0);         //窗体的起始位置为(x,y)
+         //       this.Location = (Point)new Size(2000, 0);         //窗体的起始位置为(x,y)
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            //if (Form1.TakeOrderBool == false)
-            //{
-            //   // int tempId = Form1.TempOrderId;
-            //    DataTable dtOrderTable = SqlHelper.ExecuteDataTable("select * from Cater.CookbookSetInDateDetail where CookbookDateId = '" + tempId + "'");
-           
-            //    for (int i = 0; i < dtOrderTable.Rows.Count; i++)
-            //    {
-            //        label2.Text += dtOrderTable.Rows[i][3].ToString() + "\r\n\r\n";
-            //    }
-            //    timer1.Stop();
-            //}
+            richTextBox1.Text = "番茄炒蛋\n牛肉炒鸡腿\n";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -41,15 +32,19 @@ namespace Pc_monitor
             Form1.TakeOrderBool = true;
             Form1.AllowTakeOrderBool = true;
             timer1.Start();
-            label2.Text = "";
-            
-            
         }
 
         private void backForm_Load(object sender, EventArgs e)
         {
-            timer1.Enabled=true;
+            timer1.Enabled = true;
             timer1.Start();
+            richTextBox1.ForeColor =Color.Red;
+            richTextBox1.Font = new Font("黑体", 20);
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
